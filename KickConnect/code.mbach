@@ -1,0 +1,64 @@
+scene primaryScene = {
+
+    size = (1600, 900).
+    layers = {top}.
+
+    background = loadImage(Images/surfaceBois.png).
+    kicker_img = loadImage(Images/kicker.png).
+    readerRFID_img = loadImage(Images/lecteurRFID.png).
+    handRFIDRed_img = loadImage(Images/mainRFIDRouge.png).
+    handRFIDBlue_img = loadImage(Images/mainRFIDBleu.png).
+    screen_img = loadImage(Images/screen.png).
+    ball_img = loadImage(Images/ball.png).
+
+    widget kicker = {
+        display = { kicker_img }
+        init = { wdL = top. }
+    }
+    widget screen = {
+        display = { screen_img }
+        init = { wdL = top. }
+    }
+    widget readerRFID = {
+        display = { readerRFID_img }
+        init = { wdL = top. }
+    }
+    widget handRFIDRed = {
+        display = { handRFIDRed_img }
+        init = { wdL = top. }
+    }
+    widget handRFIDBlue = {
+        display = { handRFIDBlue_img }
+        init = { wdL = top. }
+    }
+    widget ball = {
+        display = { ball_img }
+        init = { wdL = top. }
+    }
+
+}.
+
+proc Init = draw_scene(primaryScene);
+            place_at(kicker, primaryScene, 400,300);
+            place_at(readerRFID, primaryScene, 100, 200);
+            place_at(screen, primaryScene, 1000,300);
+            place_at(handRFIDBlue, primaryScene, 50,300);
+            place_at(handRFIDRed, primaryScene, 50,300);
+            show(kicker, primaryScene);
+            show(screen, primaryScene);
+            show(readerRFID, primaryScene).
+
+     RedRegister = get(redRegister);
+                   show(handRFIDRed, primaryScene);
+                   hide(handRFIDRed, primaryScene);
+                   tell(okRegister).
+
+     BlueRegister = get(blueRegister);
+                    show(handRFIDBlue, primaryScene);
+                    text("Blue Player", 1100, 350)
+                    hide(handRFIDBlue, primaryScene);
+                    tell(redRegister).
+
+     Main = Init; 
+            tell(blueRegister);
+            (RedRegister || BlueRegister).
