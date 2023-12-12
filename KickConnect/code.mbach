@@ -1,3 +1,9 @@
+eset NbrGoal = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.
+     
+eqn nextGoal(0) = 1. nextGoal(1) = 2. nextGoal(2) = 3.
+    nextGoal(3) = 4. nextGoal(4) = 5. nextGoal(5) = 6.
+    nextGoal(6) = 7. nextGoal(7) = 8. nextGoal(8) = 9.
+
 scene primaryScene = {
 
     size = (1600, 900).
@@ -10,6 +16,9 @@ scene primaryScene = {
     handRFIDBlue_img = loadImage(Images/mainRFIDBleu.png).
     screen_img = loadImage(Images/screen.png).
     ball_img = loadImage(Images/ball.png).
+    playerRed_img = loadImage(Images/player_red.png).
+    playerBlue_img = loadImage(Images/player_blue.png).
+    one_img = 
 
     widget kicker = {
         display = { kicker_img }
@@ -35,6 +44,17 @@ scene primaryScene = {
         display = { ball_img }
         init = { wdL = top. }
     }
+    widget player_red = {
+        display = { playerRed_img }
+        init = { wdL = top. }
+    }
+    widget player_blue = {
+        display = { playerBlue_img }
+        init = { wdL = top. }
+    }
+    widget goalRed = {
+
+    }
 
 }.
 
@@ -44,21 +64,34 @@ proc Init = draw_scene(primaryScene);
             place_at(screen, primaryScene, 1000,300);
             place_at(handRFIDBlue, primaryScene, 50,300);
             place_at(handRFIDRed, primaryScene, 50,300);
+            place_at(player_red, primaryScene, 1300, 350);
+            place_at(player_blue, primaryScene, 1050, 350);
             show(kicker, primaryScene);
             show(screen, primaryScene);
             show(readerRFID, primaryScene).
 
      RedRegister = get(redRegister);
                    show(handRFIDRed, primaryScene);
+                   show(player_red, primaryScene);
                    hide(handRFIDRed, primaryScene);
                    tell(okRegister).
 
      BlueRegister = get(blueRegister);
                     show(handRFIDBlue, primaryScene);
-                    text("Blue Player", 1100, 350)
+                    show(player_blue, primaryScene);
                     hide(handRFIDBlue, primaryScene);
                     tell(redRegister).
 
+     StartPoint(nbrGoalBlue : RCInt, nbrGoalRed : RCInt) =
+               ((nbrGoalBlue <= 9 & nbrGoalRed <= 9) -> (GoalBlue(nbrGoalBlue, nbrGoalRed) || GoalRed(nbrGoalBlue,nbrGoalRed)))
+
+     GoalRed(nbrGoalBlue : RCInt, nbrGoalRed : RCInt) =
+
+
+     GoalBlue(nbrGoalBlue : RCInt, nbrGoalRed : RCInt) =
+             
+
      Main = Init; 
             tell(blueRegister);
-            (RedRegister || BlueRegister).
+            (RedRegister || BlueRegister);
+            StartPoint(0,0).
