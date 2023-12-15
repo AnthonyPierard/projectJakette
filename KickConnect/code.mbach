@@ -1,6 +1,11 @@
-eset NbrGoal = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}.
-     
-eqn nextGoal(0) = 1. nextGoal(1) = 2. nextGoal(2) = 3.
+eset NbrGoalStr = {zero, one, two, three, four, five, six, seven, eight, nine}.
+     NbrGoal = {0,1,2,3,4,5,6,7,8,9}.
+
+eqn nextGoalStr(zero) = one. nextGoalStr(one) = two. nextGoalStr(two) = three.
+    nextGoalStr(three) = four. nextGoalStr(four) = five. nextGoalStr(five) = six.
+    nextGoalStr(six) = seven. nextGoalStr(seven) = eight. nextGoalStr(eight) = nine.
+
+    nextGoal(0) = 1. nextGoal(1) = 2. nextGoal(2) = 3.
     nextGoal(3) = 4. nextGoal(4) = 5. nextGoal(5) = 6.
     nextGoal(6) = 7. nextGoal(7) = 8. nextGoal(8) = 9.
 
@@ -18,7 +23,18 @@ scene primaryScene = {
     ball_img = loadImage(Images/ball.png).
     playerRed_img = loadImage(Images/player_red.png).
     playerBlue_img = loadImage(Images/player_blue.png).
-    one_img = 
+    zero_img = loadImage(Images/0.png).
+    one_img = loadImage(Images/1.png).
+    two_img = loadImage(Images/2.png).
+    three_img = loadImage(Images/3.png).
+    four_img = loadImage(Images/4.png).
+    five_img = loadImage(Images/5.png).
+    six_img = loadImage(Images/6.png).
+    seven_img = loadImage(Images/7.png).
+    eight_img = loadImage(Images/8.png).
+    nine_img = loadImage(Images/9.png).
+    winBlue_img = loadImage(Images/player_blue_wins.png).
+    winRed_img = loadImage(Images/player_red_wins.png).
 
     widget kicker = {
         display = { kicker_img }
@@ -44,16 +60,59 @@ scene primaryScene = {
         display = { ball_img }
         init = { wdL = top. }
     }
-    widget player_red = {
+    widget playerRed = {
         display = { playerRed_img }
         init = { wdL = top. }
     }
-    widget player_blue = {
+    widget playerBlue = {
         display = { playerBlue_img }
         init = { wdL = top. }
     }
+    widget goalBlue = {
+        attributes = { number in NbrGoal.}
+        display = {
+            number = zero -> zero_img.
+            number = one -> one_img.
+            number = two -> two_img.
+            number = three -> three_img.
+            number = four -> four_img.
+            number = five -> five_img.
+            number = six -> six_img.
+            number = seven -> seven_img.
+            number = eight -> eight_img.
+            number = nine -> nine_img.
+        }
+        init = {
+            wdL = top.
+            number = zero.
+        }
+    }
     widget goalRed = {
-
+        attributes = { number in NbrGoal.}
+        display = {
+            number = zero -> zero_img.
+            number = one -> one_img.
+            number = two -> two_img.
+            number = three -> three_img.
+            number = four -> four_img.
+            number = five -> five_img.
+            number = six -> six_img.
+            number = seven -> seven_img.
+            number = eight -> eight_img.
+            number = nine -> nine_img.
+        }
+        init = {
+            wdL = top.
+            number = zero.
+        }
+    }
+    widget winBlue = {
+        display = { winBlue_img }
+        init = {wdL = top.}
+    }
+    widget winRed = {
+        display = { winRed_img }
+        init = { wdL = top.}
     }
 
 }.
@@ -64,34 +123,54 @@ proc Init = draw_scene(primaryScene);
             place_at(screen, primaryScene, 1000,300);
             place_at(handRFIDBlue, primaryScene, 50,300);
             place_at(handRFIDRed, primaryScene, 50,300);
-            place_at(player_red, primaryScene, 1300, 350);
-            place_at(player_blue, primaryScene, 1050, 350);
+            place_at(playerRed, primaryScene, 1300, 350);
+            place_at(playerBlue, primaryScene, 1075, 350);
+            place_at(goalBlue, primaryScene, 1125, 450);
+            place_at(goalRed, primaryScene, 1350,450);
+            place_at(winBlue, primaryScene, 575, 50);
+            place_at(winRed, primaryScene, 575, 50);
             show(kicker, primaryScene);
             show(screen, primaryScene);
             show(readerRFID, primaryScene).
 
      RedRegister = get(redRegister);
                    show(handRFIDRed, primaryScene);
-                   show(player_red, primaryScene);
+                   show(playerRed, primaryScene);
+                   show(goalRed, primaryScene);
                    hide(handRFIDRed, primaryScene);
                    tell(okRegister).
 
      BlueRegister = get(blueRegister);
                     show(handRFIDBlue, primaryScene);
-                    show(player_blue, primaryScene);
+                    show(playerBlue, primaryScene);
+                    show(goalBlue, primaryScene);
                     hide(handRFIDBlue, primaryScene);
                     tell(redRegister).
 
-     StartPoint(nbrGoalBlue : RCInt, nbrGoalRed : RCInt) =
-               ((nbrGoalBlue <= 9 & nbrGoalRed <= 9) -> (GoalBlue(nbrGoalBlue, nbrGoalRed) || GoalRed(nbrGoalBlue,nbrGoalRed)))
+     StartPoint(nbrGoalBlue : NbrGoal, nbrGoalBlueStr : NbrGoalStr, nbrGoalRed : NbrGoal, nbrGoalRedStr : NbrGoalStr) =
+               ((nbrGoalBlue < 9 & nbrGoalRed < 9) -> place_at(ball, primaryScene, 625,450);
+                                                      show(ball,primaryScene);
+                                                      (GoalBlue(nbrGoalBlue, nbrGoalBlueStr, nbrGoalRed, nbrGoalRedStr) + GoalRed(nbrGoalBlue, nbrGoalBlueStr, nbrGoalRed, nbrGoalRedStr)))
+               + 
+               ((nbrGoalBlue >= 9) -> show(winBlue, primaryScene);
+                                      tell(endGame))
+               +
+               ((nbrGoalRed >= 9) -> show(winRed, primaryScene);
+                                     tell(endGame)).
 
-     GoalRed(nbrGoalBlue : RCInt, nbrGoalRed : RCInt) =
+     GoalRed(nbrGoalBlue : NbrGoal, nbrGoalBlueStr : NbrGoalStr, nbrGoalRed : NbrGoal, nbrGoalRedStr : NbrGoalStr) = move_to(ball, primaryScene, 825, 450);
+                                                            att(number, goalRed, primaryScene, nextGoalStr(nbrGoalRedStr));
+                                                            hide(ball, primaryScene);
+                                                            StartPoint(nbrGoalBlue,nbrGoalBlueStr, nextGoal(nbrGoalRed), nextGoalStr(nbrGoalRedStr)).
 
-
-     GoalBlue(nbrGoalBlue : RCInt, nbrGoalRed : RCInt) =
-             
+     GoalBlue(nbrGoalBlue : NbrGoal, nbrGoalBlueStr : NbrGoalStr, nbrGoalRed : NbrGoal, nbrGoalRedStr : NbrGoalStr) = move_to(ball, primaryScene, 425, 450);
+                                                             att(number, goalBlue, primaryScene, nextGoalStr(nbrGoalBlueStr));
+                                                             hide(ball, primaryScene);
+                                                             StartPoint(nextGoal(nbrGoalBlue), nextGoalStr(nbrGoalBlueStr), nbrGoalRed, nbrGoalRedStr).
 
      Main = Init; 
             tell(blueRegister);
             (RedRegister || BlueRegister);
-            StartPoint(0,0).
+            get(okRegister);
+            StartPoint(0, zero, 0, zero);
+            get(endGame).
